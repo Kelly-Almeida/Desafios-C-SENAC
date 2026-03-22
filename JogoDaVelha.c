@@ -15,10 +15,20 @@ void jogadaComp(char tab[3][3]);
 bool verificaP(char tab[3][3], bool comp, int numJogada);
 void mensagemFim(bool comp, bool empate);
 
+//Variáveis globais
+void placar();
+int vitoUser;
+int vitoComp;
+int numEmpate;
+int numPartidas;
+
 
 
 void main(){
     bool jogando = true;
+    vitoUser = 0;
+    vitoComp = 0;
+    numEmpate = 0;
     
     do{
         //Declarações
@@ -51,6 +61,7 @@ void main(){
            }
            
         }while(partida);
+        placar();
        
        //pergunta de continuação  
        jogando = continuacao();
@@ -102,8 +113,9 @@ void MostrarTabela(char tab[3][3]){
                 printf(" |");
             }
         }
-        printf("\n");
-        
+        if(i != 2){
+            printf("\n-----------\n");
+        }
     }
 }
 
@@ -215,10 +227,25 @@ void mensagemFim(bool comp, bool empate){
     if (!empate){
         if(comp){
             printf("Vitória do computador!!\n");
+            vitoComp++;
         }else{
             printf("Vitória do jogador!!\n");
+            vitoUser++;
         }
     }else{
         printf("Empate\n");
+        numEmpate++;
     }
+    numPartidas++;
+}
+
+void placar(){
+    printf("\n==============\n");
+    printf("    Placar");
+    printf("\n==============\n");
+    printf("Número de partidas: %d \n", numPartidas);
+    printf("User: %d \n", vitoUser);
+    printf("Computador: %d \n", vitoComp);
+    printf("Empates: %d \n", numEmpate);
+    printf("\n==============\n");
 }
