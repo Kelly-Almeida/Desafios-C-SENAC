@@ -6,21 +6,38 @@
 #include<string.h>
 
 //Declaração de funções
-bool continuacao();
-void MostrarTabela(char tab[3][3]);
-void jogadaUser(char tab[3][3]);
-bool escolValida(char op, char tab[3][3], bool comp);
-void marcar(char tab[3][3], int i, int j, bool comp);
-void jogadaComp(char tab[3][3]);
+
+    //Modo computador
+void jogadaComp(char tab[3][3]);   
+bool analise(char tab[3][3], int coordenadas[]);  
+
+    //Funcionamento universal
+    
+/*bool modoJogo();*/
 bool verificaP(char tab[3][3], bool comp, int numJogada);
-void mensagemFim(bool comp, bool empate);
+bool continuacao();  
+void MostrarTabela(char tab[3][3]);
+
+void jogadaUser(char tab[3][3]); //Incluir o mecânismo do nome do jogador   
+void mensagemFim(bool comp, bool empate); //Incluir mensagens para o modo de dois jogadores
+void marcar(char tab[3][3], int i, int j, bool comp); //Adicionar uma parte para um jogador secundário
+bool escolValida(char op, char tab[3][3], bool comp); //Adicionar adaptação para segundo jogador
+void placar(); //Adicinar a uma adaptação para o jogadores
+
+
+    //Modo Jogadores
+/*string nomeJogador (); // adiciona os nomes dos jogadores*/
+    
 
 //Variáveis globais
-void placar();
+
 int vitoUser;
 int vitoComp;
 int numEmpate;
 int numPartidas;
+/*string nomePlayer1*/
+/*string nomePlayer2*/
+/*bool jodoDuo;*/
 
 
 
@@ -29,6 +46,9 @@ void main(){
     vitoUser = 0;
     vitoComp = 0;
     numEmpate = 0;
+    
+    //Modo de dois Jogadores...
+    
     
     do{
         //Declarações
@@ -69,6 +89,7 @@ void main(){
 
 }
 
+//Mensagem de continuação
 bool continuacao (){
     bool respInvalida = true;
     bool continua;
@@ -97,6 +118,7 @@ bool continuacao (){
     return continua;
 } 
 
+//Mostra a tabela do jogo
 void MostrarTabela(char tab[3][3]){
     system("clear");
     
@@ -119,6 +141,7 @@ void MostrarTabela(char tab[3][3]){
     }
 }
 
+// Marca a resposta do usuário
 void jogadaUser(char tab[3][3]){
     bool escolhendo = true;
     char escol;
@@ -135,21 +158,119 @@ void jogadaUser(char tab[3][3]){
     }while(escolhendo);
 }
 
+// Escolhe a posição do boot
 void jogadaComp(char tab[3][3]){
     srand(time(NULL));
     bool escolhendo = true;
     char iC,iJ;
+    int coord[2] = {-1, -1};
+    
+   bool marcadoAnalise = analise(tab, coord);
+    
     
     do{
-        iC = rand() % 3;
-        iJ = rand() % 3;
-        
-        if (escolValida(tab[iC][iJ], tab, true)){
+        if(marcadoAnalise){
             escolhendo = false;
+        } else{
+            iC = rand() % 3;
+            iJ = rand() % 3;
+            
+            if (escolValida(tab[iC][iJ], tab, true)){
+            escolhendo = false;
+            
+            }
         }
     }while(escolhendo);
 }
 
+//Analise do Jogo
+bool analise(char tab [3][3], int coordenadas[2]){
+
+    //Verificação de possível vitória em coluna
+    for(int j = 0; j < 3; j++){
+        if (tab[0][j] == tab[1][j]){
+            
+            if(escolValida(tab[2][j], tab, true)){
+                return true;
+            }
+            
+            
+        }else if (tab[0][j] == tab[2][j]){
+            
+            if (escolValida(tab[1][j], tab, true)){
+                return true;
+            }
+            
+        }else if (tab[1][j] == tab[2][j]){
+        
+            if (escolValida(tab[0][j], tab, true)){
+                return true;
+            }
+        }
+    }
+    
+    //Verificação de possível vitória em linha
+    for(int i = 0; i < 3; i++){
+        if (tab[i][0] == tab[i][1]){
+            
+            if(escolValida(tab[i][2], tab, true)){
+                return true;
+            }
+            
+            
+        }else if (tab[i][0] == tab[i][2]){
+            
+            if (escolValida(tab[i][1], tab, true)){
+                return true;
+            }
+            
+        }else if (tab[i][1] == tab[i][2]){
+        
+            if (escolValida(tab[i][0], tab, true)){
+                return true;
+            }
+        }
+    }
+    
+    //Teste de vitória por diagonal comum 
+    if(tab[0][0] == tab[1][1]){
+        
+        if(escolValida(tab[2][2], tab, true)){
+            return true;
+        }
+    } else if (tab[0][0] == tab[2][2]){
+        
+        if(escolValida(tab[1][1], tab, true)){
+            return true;
+        }
+    } else if (tab[1][1] == tab[2][2]){
+        if(escolValida(tab[0][0], tab, true)){
+            return true;
+        }
+    }
+    
+    //Teste de vitória por diagonal invertida
+    if(tab[0][2] == tab[1][1]){
+        
+        if(escolValida(tab[2][0], tab, true)){
+            return true;
+        }
+    } else if (tab[0][2] == tab[2][0]){
+        
+        if(escolValida(tab[1][1], tab, true)){
+            return true;
+        }
+    } else if (tab[1][1] == tab[2][0]){
+        if(escolValida(tab[0][2], tab, true)){
+            return true;
+        }
+    }
+    
+    return false;
+    
+}
+
+//Verificação de se a posição escolhida é válida
 bool escolValida(char op, char tab[3][3], bool comp){
     
     for(int i = 0; i < 3; i++){
@@ -164,6 +285,7 @@ bool escolValida(char op, char tab[3][3], bool comp){
     return false;
 }
 
+//Marcando posição
 void marcar (char tab[3][3], int i, int j, bool comp){
     if (comp){
         tab[i][j] = 'O';
@@ -172,6 +294,7 @@ void marcar (char tab[3][3], int i, int j, bool comp){
     }
 }
 
+//Verificação de vitória, derrota ou empate
 bool verificaP(char tab[3][3], bool comp, int numJogadas){
     bool resp = true;
     bool empate = false;
@@ -221,6 +344,7 @@ bool verificaP(char tab[3][3], bool comp, int numJogadas){
     return resp;
 }
 
+//Mensagens de final de partida
 void mensagemFim(bool comp, bool empate){
     printf("\nFIM DE JOGO!!\n");
     
@@ -239,6 +363,7 @@ void mensagemFim(bool comp, bool empate){
     numPartidas++;
 }
 
+//Placar
 void placar(){
     printf("\n==============\n");
     printf("    Placar");
